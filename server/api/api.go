@@ -1,8 +1,11 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/Rhionin/movie-bingo/server/bingo"
 )
 
 type (
@@ -14,9 +17,7 @@ type (
 
 // RunServer runs the http server
 func (api API) RunServer() error {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Welcome to my website!")
-	})
+	http.HandleFunc("/api/game", GameHandler)
 
 	fs := http.FileServer(http.Dir("Public/"))
 	http.Handle("/Public/", http.StripPrefix("/Public/", fs))
@@ -25,4 +26,13 @@ func (api API) RunServer() error {
 	http.ListenAndServe(":"+api.Port, nil)
 
 	return nil
+}
+
+// GameHandler handler for getting the game definition from the api
+func GameHandler(w http.ResponseWriter, r *http.Request) {
+	game := bingo.NewGame()
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(game)
 }
