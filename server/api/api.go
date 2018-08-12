@@ -27,8 +27,8 @@ func (api API) RunServer() error {
 	r.HandleFunc("/api/game", GameHandler)
 	r.HandleFunc("/api/board", BoardHandler)
 
-	// fs := http.FileServer(http.Dir("Public/"))
-	// http.Handle("/Public/", http.StripPrefix("/Public/", fs))
+	fs := http.FileServer(http.Dir("Public/"))
+	r.PathPrefix("/Public/").Handler(http.StripPrefix("/Public/", fs))
 
 	fmt.Printf("Running server on port %s\n", api.Port)
 	http.ListenAndServe(":"+api.Port, r)
