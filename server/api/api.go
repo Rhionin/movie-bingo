@@ -18,8 +18,8 @@ func (api API) RunServer() error {
 		fmt.Fprintf(w, "Welcome to my website!")
 	})
 
-	fs := http.FileServer(http.Dir("static/"))
-	http.Handle("/static/", http.StripPrefix("/static/", fs))
+	fs := http.FileServer(http.Dir("Public/"))
+	http.Handle("/Public/", http.StripPrefix("/Public/", fs))
 
 	fmt.Printf("Running server on port %s\n", api.Port)
 	http.ListenAndServe(":"+api.Port, nil)
