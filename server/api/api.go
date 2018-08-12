@@ -21,8 +21,8 @@ func (api API) RunServer() error {
 	fs := http.FileServer(http.Dir("static/"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
-	fmt.Printf("Running server on port %s\n", api.port)
-	http.ListenAndServe(":"+api.port, nil)
+	fmt.Printf("Running server on port %s\n", api.Port)
+	http.ListenAndServe(":"+api.Port, nil)
 
 	return nil
 }

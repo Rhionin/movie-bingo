@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/Rhionin/movie-bingo/api"
+	"github.com/Rhionin/movie-bingo/server/api"
 )
 
 func main() {
