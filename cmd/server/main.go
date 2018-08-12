@@ -1,24 +1,20 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
 	"os"
+
+	"github.com/Rhionin/movie-bingo/api"
 )
 
 func main() {
 
 	port := getenvOrDefault("PORT", "8018")
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Welcome to my website!")
-	})
+	api := api.API{
+		Port: port,
+	}
 
-	fs := http.FileServer(http.Dir("static/"))
-	http.Handle("/static/", http.StripPrefix("/static/", fs))
-
-	fmt.Printf("Running server on port %s\n", port)
-	http.ListenAndServe(":"+port, nil)
+	api.RunServer()
 }
 
 func getenvOrDefault(key, fallback string) string {
