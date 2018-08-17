@@ -1,10 +1,25 @@
 package bingo
 
-import "math/rand"
+import (
+	"fmt"
+	"math/rand"
+
+	"github.com/satori/go.uuid"
+)
+
+var (
+	// ErrNotFound returned when a requested resource is not found
+	ErrNotFound = fmt.Errorf("Not found")
+
+	games = make(map[uuid.UUID]Game)
+)
 
 type (
 	// Game instance of a bingo game
 	Game struct {
+		// ID The game ID
+		ID uuid.UUID
+
 		// Events events that can happen in a movie
 		Events []string
 
@@ -34,14 +49,54 @@ type (
 // NewGame create a new bingo game
 func NewGame() Game {
 
+	id := uuid.NewV4()
 	events := getEvents()
 
 	game := Game{
+		ID:     id,
 		Events: events,
 		Boards: []Board{},
 	}
 
+	// Add game to in-memory game registry
+	games[id] = game
+
 	return game
+}
+
+// GetGame gets a bingo game by ID
+func GetGame(id uuid.UUID) (Game, error) {
+	game, ok := games[id]
+	if !ok {
+		return game, ErrNotFound
+	}
+
+	return game, nil
+}
+
+// NewBoard creates a new board
+func (g Game) NewBoard(player string, color string, events []string) Board {
+	cells := []Cell{}
+	for _, evt := range events {
+		cells = append(cells, Cell{
+			Text:   evt,
+			Filled: false,
+		})
+	}
+
+	rand.Shuffle(len(cells), func(i, j int) {
+		cells[i], cells[j] = cells[j], cells[i]
+	})
+
+	board := Board{
+		Player: player,
+		Color:  color,
+		Cells:  cells,
+	}
+
+	g.Boards = append(g.Boards, board)
+
+	return board
 }
 
 func getEvents() []string {
@@ -71,26 +126,5 @@ func getEvents() []string {
 		"w",
 		"x",
 		"y",
-	}
-}
-
-// NewBoard creates a new board
-func NewBoard(player string, color string, events []string) Board {
-	cells := []Cell{}
-	for _, evt := range events {
-		cells = append(cells, Cell{
-			Text:   evt,
-			Filled: false,
-		})
-	}
-
-	rand.Shuffle(len(cells), func(i, j int) {
-		cells[i], cells[j] = cells[j], cells[i]
-	})
-
-	return Board{
-		Player: player,
-		Color:  color,
-		Cells:  cells,
 	}
 }
