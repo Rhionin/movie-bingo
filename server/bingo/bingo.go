@@ -12,13 +12,13 @@ var (
 	// ErrNotFound returned when a requested resource is not found
 	ErrNotFound = fmt.Errorf("Not found")
 
-	games = make(map[uuid.UUID]Game)
+	games = make(map[string]Game)
 )
 
 func init() {
 	if os.Getenv("CREATE_MOCK_GAME") == "true" {
 		game := NewGame()
-		fmt.Println("Mock game created: " + game.ID.String())
+		fmt.Println("Mock game created: " + game.ID)
 		game.NewBoard("Bruce Wayne", "Black")
 	}
 }
@@ -27,7 +27,7 @@ type (
 	// Game instance of a bingo game
 	Game struct {
 		// ID The game ID
-		ID uuid.UUID
+		ID string
 		// Events events that can happen in a movie
 		Events []string
 		// Boards the collection of boards used by players of the game
@@ -58,7 +58,7 @@ type (
 // NewGame create a new bingo game
 func NewGame() Game {
 	// TODO get different types of games (disney, hallmark, marvel, conference...)
-	id := uuid.NewV4()
+	id := newGameID()
 	events := getEvents()
 
 	game := Game{
@@ -74,7 +74,7 @@ func NewGame() Game {
 }
 
 // GetGame gets a bingo game by ID
-func GetGame(id uuid.UUID) (Game, error) {
+func GetGame(id string) (Game, error) {
 	game, ok := games[id]
 	if !ok {
 		return game, ErrNotFound
@@ -138,4 +138,14 @@ func getEvents() []string {
 		"x",
 		"y",
 	}
+}
+
+func newGameID() string {
+	var letterRunes = []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+	b := make([]rune, 4)
+	for i := range b {
+		b[i] = letterRunes[rand.Intn(len(letterRunes))]
+	}
+	return string(b)
 }

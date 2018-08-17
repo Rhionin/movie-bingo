@@ -7,7 +7,6 @@ import (
 
 	"github.com/Rhionin/movie-bingo/server/bingo"
 	"github.com/gorilla/mux"
-	uuid "github.com/satori/go.uuid"
 )
 
 type (
@@ -62,6 +61,12 @@ func CreateBoardHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// b, err := ioutil.ReadAll(r.Body)
+	// if err != nil {
+	// 	failWithError(w, err)
+	// 	return
+	// }
+
 	playerName := "Some player" // TODO Get from request
 	color := "Some color"       // TODO Get from request or have the server choose
 
@@ -74,7 +79,7 @@ func CreateBoardHandler(w http.ResponseWriter, r *http.Request) {
 
 func getGameFromRequest(w http.ResponseWriter, r *http.Request) (bingo.Game, error) {
 	vars := mux.Vars(r)
-	gameID := uuid.FromStringOrNil(vars["gameID"])
+	gameID := vars["gameID"]
 	game, err := bingo.GetGame(gameID)
 
 	if err == bingo.ErrNotFound {
