@@ -65,7 +65,7 @@ func CreateBoardHandler(w http.ResponseWriter, r *http.Request) {
 	playerName := "Some player" // TODO Get from request
 	color := "Some color"       // TODO Get from request or have the server choose
 
-	board := game.NewBoard(playerName, color, game.Events)
+	board := game.NewBoard(playerName, color)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)

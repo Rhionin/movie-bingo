@@ -3,6 +3,7 @@ package bingo
 import (
 	"fmt"
 	"math/rand"
+	"os"
 
 	"github.com/satori/go.uuid"
 )
@@ -14,21 +15,29 @@ var (
 	games = make(map[uuid.UUID]Game)
 )
 
+func init() {
+	if os.Getenv("CREATE_MOCK_GAME") == "true" {
+		game := NewGame()
+		fmt.Println("Mock game created: " + game.ID.String())
+		game.NewBoard("Bruce Wayne", "Black")
+	}
+}
+
 type (
 	// Game instance of a bingo game
 	Game struct {
 		// ID The game ID
 		ID uuid.UUID
-
 		// Events events that can happen in a movie
 		Events []string
-
 		// Boards the collection of boards used by players of the game
-		Boards []Board
+		Boards map[uuid.UUID]Board
 	}
 
 	// Board a bingo board
 	Board struct {
+		// ID The board ID
+		ID uuid.UUID
 		// Player the player using the board
 		Player string
 		// Cells the matrix of cells on a bingo board
@@ -55,7 +64,7 @@ func NewGame() Game {
 	game := Game{
 		ID:     id,
 		Events: events,
-		Boards: []Board{},
+		Boards: make(map[uuid.UUID]Board),
 	}
 
 	// Add game to in-memory game registry
@@ -75,9 +84,9 @@ func GetGame(id uuid.UUID) (Game, error) {
 }
 
 // NewBoard creates a new board
-func (g Game) NewBoard(player string, color string, events []string) Board {
+func (g Game) NewBoard(player string, color string) Board {
 	cells := []Cell{}
-	for _, evt := range events {
+	for _, evt := range g.Events {
 		cells = append(cells, Cell{
 			Text:   evt,
 			Filled: false,
@@ -88,13 +97,15 @@ func (g Game) NewBoard(player string, color string, events []string) Board {
 		cells[i], cells[j] = cells[j], cells[i]
 	})
 
+	boardID := uuid.NewV4()
 	board := Board{
+		ID:     boardID,
 		Player: player,
 		Color:  color,
 		Cells:  cells,
 	}
 
-	g.Boards = append(g.Boards, board)
+	g.Boards[boardID] = board
 
 	return board
 }
