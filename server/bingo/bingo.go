@@ -48,7 +48,7 @@ type (
 
 // NewGame create a new bingo game
 func NewGame() Game {
-
+	// TODO get different types of games (disney, hallmark, marvel, conference...)
 	id := uuid.NewV4()
 	events := getEvents()
 
