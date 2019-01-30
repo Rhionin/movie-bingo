@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"time"
 
 	"github.com/Rhionin/movie-bingo/server/api"
 )
@@ -14,7 +15,8 @@ func main() {
 		Port: port,
 	}
 
-	api.RunServer()
+	go api.RunServer()
+	time.Sleep(1 * time.Hour)
 }
 
 func getenvOrDefault(key, fallback string) string {
