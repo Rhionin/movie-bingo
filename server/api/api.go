@@ -24,8 +24,8 @@ func (api API) RunServer() error {
 	r.HandleFunc("/api/games/{gameID}", GetGameHandler).Methods("GET")
 	r.HandleFunc("/api/games/{gameID}/boards", CreateBoardHandler).Methods("POST")
 
-	fs := http.FileServer(http.Dir("Public/"))
-	r.PathPrefix("/Public/").Handler(http.StripPrefix("/Public/", fs))
+	fs := http.FileServer(http.Dir("ui/dist/movie-bingo"))
+	r.PathPrefix("/").Handler(http.StripPrefix("/", fs))
 
 	fmt.Printf("Running server on port %s\n", api.Port)
 	http.ListenAndServe(":"+api.Port, r)
